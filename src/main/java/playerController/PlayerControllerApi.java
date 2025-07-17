@@ -1,17 +1,17 @@
-package client;
+package playerController;
 
 import constants.EndpointApiConstants;
 import enums.RoleEnum;
 import io.restassured.http.ContentType;
 import io.restassured.response.Response;
-import model.request.CreatePlayerRequest;
-import service.SpecificationApiFactory;
+import models.request.CreatePlayerRequest;
+import factories.SpecificationApiFactory;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 
-public class PlayerControllerApiService {
+public class PlayerControllerApi {
 
     public Response createPlayer(CreatePlayerRequest requestModel) {
         return given(SpecificationApiFactory.getApiRequestSpecification())

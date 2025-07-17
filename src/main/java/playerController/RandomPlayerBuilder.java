@@ -1,8 +1,8 @@
-package playerControllerUtils;
+package playerController;
 
 import enums.GenderEnum;
 import enums.RoleEnum;
-import model.request.CreatePlayerRequest;
+import models.request.CreatePlayerRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +26,17 @@ public class RandomPlayerBuilder {
         request.setScreenName(getRandomScreenName());
         request.setEditor(RoleEnum.SUPERVISOR);
         log.info("Creating a player with random data: {}, thread: {}", request, Thread.currentThread().getName());
+        return this;
+    }
+
+    public RandomPlayerBuilder withEmptyData() {
+        request.setAge(0);
+        request.setRole(RoleEnum.EMPTY);
+        request.setGender(GenderEnum.EMPTY);
+        request.setLogin("");
+        request.setPassword("");
+        request.setScreenName("");
+        request.setEditor(RoleEnum.EMPTY);
         return this;
     }
 

@@ -9,7 +9,8 @@ public enum RoleEnum {
 
     SUPERVISOR("supervisor"),
     ADMIN("admin"),
-    USER("user");
+    USER("user"),
+    EMPTY("");
 
     private final String name;
 }

@@ -1,10 +1,12 @@
-package model.response;
+package models.response;
 
+import io.qameta.allure.internal.shadowed.jackson.annotation.JsonIgnoreProperties;
 import io.qameta.allure.internal.shadowed.jackson.annotation.JsonProperty;
 import lombok.Getter;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Getter
-public class GetPlayerByIdResponse {
+public class CreatePlayerResponse {
     @JsonProperty("id")
     private int id;
     @JsonProperty("age")

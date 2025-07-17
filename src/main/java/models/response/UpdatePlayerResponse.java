@@ -1,4 +1,4 @@
-package model.response;
+package models.response;
 
 import io.qameta.allure.internal.shadowed.jackson.annotation.JsonProperty;
 import lombok.Getter;

@@ -1,13 +1,13 @@
 package tests;
 
-import enums.GenderEnum;
 import enums.RoleEnum;
+import io.qameta.allure.Epic;
 import io.restassured.response.Response;
-import model.request.CreatePlayerRequest;
-import model.response.*;
+import models.request.CreatePlayerRequest;
+import models.response.*;
 import org.assertj.core.api.SoftAssertions;
 import org.testng.annotations.*;
-import playerControllerUtils.RandomPlayerBuilder;
+import playerController.RandomPlayerBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -28,9 +28,10 @@ public class PlayerControllerPositiveTests extends BaseTest {
     public void deleteCreatedPlayers() {
         List<GetAllPlayerResponse.PlayerResponse> allPlayerAfterTests = playerClient.getAllPlayer().getPlayers();
         allPlayerAfterTests.removeAll(allPlayerBeforeTests);
-        allPlayerAfterTests.forEach(e -> apiService.deletePlayer(e.getId(), RoleEnum.SUPERVISOR));
+        allPlayerAfterTests.forEach(pl -> apiService.deletePlayer(pl.getId(), RoleEnum.SUPERVISOR));
     }
 
+    @Epic("Player Controller")
     @Test(description = "Verify that a new player is created successfully by role 'supervisor'",
             groups = "delete-created-player")
     public void verifyPlayerIsCreatedSuccessfullyBySupervisor() {
@@ -64,6 +65,42 @@ public class PlayerControllerPositiveTests extends BaseTest {
         softAssertions.assertAll();
     }
 
+    @Epic("Player Controller")
+    @Test(description = "Verify that a new player is created successfully without 'password'",
+            groups = "delete-created-player")
+    public void verifyPlayerIsCreatedSuccessfullyWithoutPassword() {
+        CreatePlayerRequest playerToCreate = new RandomPlayerBuilder().withRandomValidData().build();
+        playerToCreate.setPassword("");
+        Response createdPlayerResponse = apiService.createPlayer(playerToCreate);
+
+        assertThat(createdPlayerResponse.getStatusCode())
+                .as("After creating a user without 'password' there should be correct status code")
+                .isIn(200, 201, 204);
+        CreatePlayerResponse createdPlayer = playerClient.createPlayer(playerToCreate);
+
+        SoftAssertions softAssertions = new SoftAssertions();
+        softAssertions.assertThat(createdPlayer.getLogin())
+                .as("New created user response body has not expected login")
+                .isEqualTo(playerToCreate.getLogin());
+        softAssertions.assertThat(createdPlayer.getPassword())
+                .as("New created user response body has not expected password")
+                .isEqualTo(playerToCreate.getPassword());
+        softAssertions.assertThat(createdPlayer.getAge())
+                .as("New created user response body has not expected age")
+                .isEqualTo(playerToCreate.getAge());
+        softAssertions.assertThat(createdPlayer.getRole())
+                .as("New created user response body has not expected role")
+                .isEqualTo(playerToCreate.getRole().getName());
+        softAssertions.assertThat(createdPlayer.getScreenName())
+                .as("New created user response body has not expected screen name")
+                .isEqualTo(playerToCreate.getScreenName());
+        softAssertions.assertThat(createdPlayer.getGender())
+                .as("New created user response body has not expected gender")
+                .isEqualTo(playerToCreate.getGender().getName());
+        softAssertions.assertAll();
+    }
+
+    @Epic("Player Controller")
     @Test(description = "Verify that a new player is created successfully by role 'admin'",
             groups = "delete-created-player")
     public void verifyPlayerIsCreatedSuccessfullyByAdmin() {
@@ -99,37 +136,38 @@ public class PlayerControllerPositiveTests extends BaseTest {
         softAssertions.assertAll();
     }
 
+    @Epic("Player Controller")
     @Test(description = "Verify that an existing player can be returned by a valid player id",
             groups = "delete-created-player")
     public void verifyExistingPlayerIsReturnedById() {
         CreatePlayerRequest playerToCreate = new RandomPlayerBuilder().withRandomValidData()
                 .build();
         CreatePlayerResponse createdPlayer = playerClient.createPlayer(playerToCreate);
-
-        GetPlayerByIdResponse fetched = playerClient.getPlayer(createdPlayer.getId());
+        GetPlayerByIdResponse getPlayerById = playerClient.getPlayer(createdPlayer.getId());
 
         SoftAssertions softAssertions = new SoftAssertions();
-        softAssertions.assertThat(fetched.getLogin())
+        softAssertions.assertThat(getPlayerById.getLogin())
                 .as("Returned player by id does not have the expected login")
                 .isEqualTo(playerToCreate.getLogin());
-        softAssertions.assertThat(fetched.getPassword())
+        softAssertions.assertThat(getPlayerById.getPassword())
                 .as("Returned player by id does not have the expected password")
                 .isEqualTo(playerToCreate.getPassword());
-        softAssertions.assertThat(fetched.getAge())
+        softAssertions.assertThat(getPlayerById.getAge())
                 .as("Returned player by id does not have the expected age")
                 .isEqualTo(playerToCreate.getAge());
-        softAssertions.assertThat(fetched.getRole())
+        softAssertions.assertThat(getPlayerById.getRole())
                 .as("Returned player by id does not have the expected role")
                 .isEqualTo(playerToCreate.getRole().getName());
-        softAssertions.assertThat(fetched.getScreenName())
+        softAssertions.assertThat(getPlayerById.getScreenName())
                 .as("Returned player by id does not have the screen name")
                 .isEqualTo(playerToCreate.getScreenName());
-        softAssertions.assertThat(fetched.getGender())
+        softAssertions.assertThat(getPlayerById.getGender())
                 .as("Returned player by id does not have the gender")
                 .isEqualTo(playerToCreate.getGender().getName());
         softAssertions.assertAll();
     }
 
+    @Epic("Player Controller")
     @Test(description = "Verify that the '/player/get/all/' endpoint returns a list of all created players",
             groups = "delete-created-player")
     public void verifyAllPlayersAreReturned() {
@@ -158,6 +196,7 @@ public class PlayerControllerPositiveTests extends BaseTest {
             throw new RuntimeException("There is no new create player after getting all players data");
     }
 
+    @Epic("Player Controller")
     @Test(description = "Verify that a player information can be successfully updated",
             groups = "delete-created-player")
     public void verifyPlayerIsUpdatedSuccessfully() {
@@ -190,50 +229,53 @@ public class PlayerControllerPositiveTests extends BaseTest {
         softAssertions.assertAll();
     }
 
+    @Epic("Player Controller")
     @Test(description = "Verify that a 'supervisor' role can successfully delete an existing player")
     public void verifyPlayerIsDeletedSuccessfullyBySupervisor() {
         CreatePlayerRequest playerToCreate = new RandomPlayerBuilder().withRandomValidData().build();
         CreatePlayerResponse createdPlayer = playerClient.createPlayer(playerToCreate);
-//need to add if empty then 204
-//if 200 then should be body
-        DeletePlayerResponse deleted = playerClient.deletePlayer(createdPlayer.getId(), RoleEnum.SUPERVISOR);
-        assertThat(deleted.getPlayers())
-                .as("Player should be deleted")
-                .isEmpty();
+
+        DeletePlayerResponse deletedPlayerResponse = playerClient.deletePlayer(createdPlayer.getId(), RoleEnum.SUPERVISOR);
+        if (!deletedPlayerResponse.getPlayers().isEmpty()) {
+            assertThat(deletedPlayerResponse.getPlayers().get(0))
+                    .as("With status code 200 player should be deleted with correct response body")
+                    .isEqualTo(createdPlayer);
+        } else {
+            assertThat(deletedPlayerResponse.getPlayers())
+                    .as("With status code 204 player should be deleted with empty response body")
+                    .isEmpty();
+        }
     }
 
-    @Test(description = "Verify that  players have unique fields: id, login, screenName")
+    @Epic("Player Controller")
+    @Test(description = "Verify that players have unique fields: id, login, screenName")
     public void verifyPlayersUniqueFields() {
+        List<CreatePlayerRequest> requestModelList = new RandomPlayerBuilder().createNumberOfUsers(5);
+        playerClient.createPlayers(requestModelList);
         GetAllPlayerResponse allPlayers = playerClient.getAllPlayer();
 
-        if (!allPlayers.getPlayers().isEmpty()) {
-            List<CreatePlayerRequest> requestModelList = new RandomPlayerBuilder().createNumberOfUsers(10);
-            playerClient.createPlayers(requestModelList);
-            allPlayers = playerClient.getAllPlayer();
-        }
-
-        Set<Integer> playerWithUniqueId = allPlayers.getPlayers()
+        Set<Integer> playersWithUniqueId = allPlayers.getPlayers()
                 .stream()
                 .map(GetAllPlayerResponse.PlayerResponse::getId)
                 .collect(Collectors.toSet());
-        Set<String> playerWithUniqueLogin = allPlayers.getPlayers()
+        Set<String> playersWithUniqueLogin = allPlayers.getPlayers()
                 .stream()
                 .map(pl -> playerClient.getPlayer(pl.getId()))
                 .map(GetPlayerByIdResponse::getLogin)
                 .collect(Collectors.toSet());
-        Set<String> playerWithUniqueScreenName = allPlayers.getPlayers()
+        Set<String> playersWithUniqueScreenName = allPlayers.getPlayers()
                 .stream()
                 .map(GetAllPlayerResponse.PlayerResponse::getScreenName)
                 .collect(Collectors.toSet());
 
         assertThat(allPlayers.getPlayers().size())
                 .as("There should not be 'id' duplication for the players")
-                .isEqualTo(playerWithUniqueId.size());
+                .isEqualTo(playersWithUniqueId.size());
         assertThat(allPlayers.getPlayers().size())
                 .as("There should not be 'login' duplication for the players")
-                .isEqualTo(playerWithUniqueLogin.size());
+                .isEqualTo(playersWithUniqueLogin.size());
         assertThat(allPlayers.getPlayers().size())
                 .as("There should not be 'screenName' duplication for the players")
-                .isEqualTo(playerWithUniqueScreenName.size());
+                .isEqualTo(playersWithUniqueScreenName.size());
     }
 }

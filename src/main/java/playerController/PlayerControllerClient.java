@@ -1,15 +1,15 @@
-package client;
+package playerController;
 
 import enums.RoleEnum;
 import io.restassured.response.Response;
-import model.request.CreatePlayerRequest;
-import model.response.*;
+import models.request.CreatePlayerRequest;
+import models.response.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class PlayerControllerClient {
-    private final PlayerControllerApiService apiService = new PlayerControllerApiService();
+    private final PlayerControllerApi apiService = new PlayerControllerApi();
 
     public CreatePlayerResponse createPlayer(CreatePlayerRequest requestModel) {
         return apiService.createPlayer(requestModel).as(CreatePlayerResponse.class);
@@ -30,7 +30,7 @@ public class PlayerControllerClient {
         } else if (statusCode == 204) {
             return new DeletePlayerResponse();
         } else {
-            throw new RuntimeException("Unexpected status code: " + statusCode + ". Response body: " + response.getBody().asString());
+            throw new RuntimeException("Deleting a player fails because of unexpected status code: " + statusCode + ". Response body: " + response.getBody().asString());
         }
     }
 

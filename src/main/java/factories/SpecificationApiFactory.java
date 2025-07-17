@@ -1,4 +1,4 @@
-package service;
+package factories;
 
 import constants.BaseConstants;
 import io.restassured.RestAssured;

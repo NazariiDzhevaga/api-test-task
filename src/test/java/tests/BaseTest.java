@@ -1,7 +1,7 @@
 package tests;
 
-import client.PlayerControllerApiService;
-import client.PlayerControllerClient;
+import playerController.PlayerControllerApi;
+import playerController.PlayerControllerClient;
 import io.restassured.RestAssured;
 import io.restassured.parsing.Parser;
 import org.slf4j.Logger;
@@ -13,7 +13,7 @@ import utils.Config;
 
 public class BaseTest {
     protected final PlayerControllerClient playerClient = new PlayerControllerClient();
-    protected final PlayerControllerApiService apiService = new PlayerControllerApiService();
+    protected final PlayerControllerApi apiService = new PlayerControllerApi();
     private static final Logger logger = LoggerFactory.getLogger(BaseTest.class);
 
     @BeforeSuite

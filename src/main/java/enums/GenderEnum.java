@@ -9,7 +9,8 @@ public enum GenderEnum {
 
     MALE("male"),
     FEMALE("female"),
-    INVALID_GENDER("invalid-gender");
+    INVALID_GENDER("invalid-gender"),
+    EMPTY("");
 
     private final String name;
 }
