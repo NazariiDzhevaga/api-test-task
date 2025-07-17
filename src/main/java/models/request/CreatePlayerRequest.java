@@ -1,4 +1,4 @@
-package model.request;
+package models.request;
 
 import enums.GenderEnum;
 import enums.RoleEnum;
