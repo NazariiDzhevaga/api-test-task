@@ -132,7 +132,7 @@
 - [x] Automation Libraries: `Rest Assured`
 - [x] Reporting Tool: `Allure` (for test results and reports)
 - [x] Version Control: `Git`
-- [x] Repository: `GitHub` ()
+- [x] Repository: `GitHub` (https://github.com/NazariiDzhevaga/api-test-task)
 
 # <a id="technology">Tools and technologies</a>
 
